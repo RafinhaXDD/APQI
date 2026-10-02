@@ -48,7 +48,7 @@ export function ConfirmEmailPage() {
           </Alert>
           <Link
             to="/login"
-            className="bg-primary text-surface inline-block rounded-md px-4 py-2 font-semibold"
+            className="font-display bg-primary text-surface inline-block rounded-md px-4 py-2 font-semibold"
           >
             {t('confirm.goLogin')}
           </Link>
@@ -116,7 +116,7 @@ export function ResetPasswordPage() {
           <Alert kind="success">{t('reset.success')}</Alert>
           <Link
             to="/login"
-            className="bg-primary text-surface inline-block rounded-md px-4 py-2 font-semibold"
+            className="font-display bg-primary text-surface inline-block rounded-md px-4 py-2 font-semibold"
           >
             {t('reset.goLogin')}
           </Link>

@@ -4,6 +4,7 @@ import type { ReactNode } from 'react'
 import { MemoryRouter } from 'react-router'
 import { vi } from 'vitest'
 import { AuthProvider } from '../features/auth/AuthProvider'
+import { SearchOriginProvider } from '../features/listings/origin'
 import type { Language } from '../i18n/i18n'
 import { I18nProvider } from '../i18n/I18nProvider'
 
@@ -52,7 +53,9 @@ export function renderApp(ui: ReactNode, { route = '/', language = 'pt-BR' as La
     <I18nProvider initialLanguage={language}>
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={[route]}>
-          <AuthProvider>{ui}</AuthProvider>
+          <AuthProvider>
+            <SearchOriginProvider>{ui}</SearchOriginProvider>
+          </AuthProvider>
         </MemoryRouter>
       </QueryClientProvider>
     </I18nProvider>,

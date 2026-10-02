@@ -59,7 +59,7 @@ export function ProfilePage() {
 
       <section className="border-border bg-surface rounded-lg border p-6">
         <p className="flex items-center gap-3 text-lg font-semibold">
-          <span className="bg-accent text-text rounded-full px-3 py-1 text-base">
+          <span className="bg-accent text-ink rounded-full px-3 py-1 text-base">
             {credits.available}
           </span>
           {tPlural('profile.credits', credits.available)}
@@ -180,7 +180,7 @@ function HomeAreaForm({ profile }: { profile: MyProfile }) {
   const save = useSaveProfile(profileApi.setHomeArea)
   const { errors } = form.formState
 
-  const useMyLocation = () => {
+  const requestMyLocation = () => {
     if (!('geolocation' in navigator)) {
       setLocationError(true)
       return
@@ -218,7 +218,7 @@ function HomeAreaForm({ profile }: { profile: MyProfile }) {
           error={fieldMessage(errors.label?.message)}
           {...form.register('label')}
         />
-        <Button type="button" variant="link" onClick={useMyLocation} disabled={locating}>
+        <Button type="button" variant="link" onClick={requestMyLocation} disabled={locating}>
           {locating ? t('profile.locating') : t('profile.useLocation')}
         </Button>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

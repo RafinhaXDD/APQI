@@ -9,6 +9,11 @@ import { LoginPage } from './features/auth/LoginPage'
 import { RegisterPage } from './features/auth/RegisterPage'
 import { RequireAuth } from './features/auth/RequireAuth'
 import { HomePage, NotFoundPage } from './features/home/HomePage'
+import { CreateListingPage } from './features/listings/CreateListingPage'
+import { EditListingPage } from './features/listings/EditListingPage'
+import { ListingDetailsPage } from './features/listings/ListingDetailsPage'
+import { MyListingsPage } from './features/listings/MyListingsPage'
+import { SearchPage } from './features/listings/SearchPage'
 import { ProfilePage } from './features/profile/ProfilePage'
 
 /** Routes only; providers live in main.tsx so tests can supply their own (e.g. MemoryRouter). */
@@ -27,6 +32,32 @@ export default function App() {
           element={
             <RequireAuth>
               <ProfilePage />
+            </RequireAuth>
+          }
+        />
+        <Route path="search" element={<SearchPage />} />
+        <Route
+          path="listings/new"
+          element={
+            <RequireAuth>
+              <CreateListingPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="listings/mine"
+          element={
+            <RequireAuth>
+              <MyListingsPage />
+            </RequireAuth>
+          }
+        />
+        <Route path="listings/:id" element={<ListingDetailsPage />} />
+        <Route
+          path="listings/:id/edit"
+          element={
+            <RequireAuth>
+              <EditListingPage />
             </RequireAuth>
           }
         />

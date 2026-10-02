@@ -21,8 +21,9 @@ services:
       retries: 20
 
   azurite:
-    image: mcr.microsoft.com/azure-storage/azurite:latest
-    command: azurite-blob --blobHost 0.0.0.0 --location /data
+    image: mcr.microsoft.com/azure-storage/azurite:3.37.0
+    # The Azure SDK can be ahead of the emulator's API version; real Azure Storage is not affected.
+    command: azurite-blob --blobHost 0.0.0.0 --location /data --skipApiVersionCheck
     ports:
       - "${AZURITE_BLOB_PORT:-10000}:10000"
     volumes:
@@ -47,6 +48,9 @@ services:
       Email__Smtp__Host: mailpit
       Email__Smtp__Port: "1025"
       DataProtection__KeysPath: /keys
+      # Azurite's well-known development account key (public, documented by Microsoft; not a secret).
+      Storage__Provider: Blob
+      Storage__BlobConnectionString: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;"
     volumes:
       - api-keys:/keys
     ports:
@@ -55,6 +59,8 @@ services:
       db:
         condition: service_healthy
       mailpit:
+        condition: service_started
+      azurite:
         condition: service_started
 
   frontend:

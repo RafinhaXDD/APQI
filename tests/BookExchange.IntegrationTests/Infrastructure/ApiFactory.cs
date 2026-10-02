@@ -17,12 +17,19 @@ public sealed class ApiFactory(
 
     public FakeEmailSender Emails { get; } = new();
 
+    public FakeBookMetadataProvider BookMetadata { get; } = new();
+
+    /// <summary>Uploaded photos for this factory only; deleted on dispose.</summary>
+    public string StorageRoot { get; } = Path.Combine(Path.GetTempPath(), "aqpi-tests", Guid.NewGuid().ToString("N"));
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
         builder.UseSetting("ConnectionStrings:Database", connectionString);
         builder.UseSetting("Jwt:SigningKey", TestSigningKey);
         builder.UseSetting("Email:AppBaseUrl", "http://app.test");
+        builder.UseSetting("Storage:Provider", "LocalDisk");
+        builder.UseSetting("Storage:LocalRootPath", StorageRoot);
 
         // Tests drive the outbox processor directly instead of racing the background loop.
         builder.UseSetting("Outbox:Enabled", "false");
@@ -40,7 +47,18 @@ public sealed class ApiFactory(
         {
             services.RemoveAll<IEmailSender>();
             services.AddSingleton<IEmailSender>(Emails);
+            services.RemoveAll<IBookMetadataProvider>();
+            services.AddSingleton<IBookMetadataProvider>(BookMetadata);
             configureServices?.Invoke(services);
         });
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        if (disposing && Directory.Exists(StorageRoot))
+        {
+            Directory.Delete(StorageRoot, recursive: true);
+        }
     }
 }

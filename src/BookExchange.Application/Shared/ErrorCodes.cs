@@ -14,7 +14,14 @@ public static class ErrorCodes
     public const string InvalidLink = "auth.invalid_link";
     public const string WrongPassword = "auth.wrong_password";
     public const string RateLimited = "rate_limited";
+    public const string Forbidden = "forbidden";
     public const string Conflict = "conflict";
+    public const string InvalidIsbn = "book.invalid_isbn";
+    public const string BookNotFound = "book.not_found";
+    public const string BookLookupUnavailable = "book.lookup_unavailable";
+    public const string LocationRequired = "listing.location_required";
+    public const string InvalidImage = "image.invalid";
+    public const string ImageTooLarge = "image.too_large";
     public const string NotFound = "not_found";
     public const string ServerError = "server_error";
 }

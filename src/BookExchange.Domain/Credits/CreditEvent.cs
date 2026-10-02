@@ -39,7 +39,7 @@ public sealed class CreditEvent
     public DateTimeOffset CreatedAt { get; private set; }
 
     public static CreditEvent Starter(Guid userId, DateTimeOffset now) =>
-        Create(userId, CreditEventType.Starter, +1, exchangeRequestId: null, "Starter credit for confirming your email", now);
+        Create(userId, CreditEventType.Starter, +1, exchangeRequestId: null, "Starter credit for listing your first book", now);
 
     private static CreditEvent Create(
         Guid userId, CreditEventType type, int amount, Guid? exchangeRequestId, string description, DateTimeOffset now)

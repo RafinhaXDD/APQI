@@ -1,30 +1,80 @@
 @import 'tailwindcss';
 
 /*
- * Design tokens (SPEC §11.4) — the single source of truth for colors.
+ * AQPI brand tokens (Duda's guidelines, adopted 2026-10-02) — the single source of truth for colors.
  * The default Tailwind palette is removed so components can only use these tokens.
- * Contrast pairs are verified by src/design/tokens.test.ts.
+ * Contrast pairs are verified by src/design/tokens.test.ts; see DESIGN.md for which text goes on which fill.
  */
 @theme {
   --color-*: initial;
 
-  --color-primary: #2f5d50;
-  --color-primary-dark: #1f4037;
-  --color-secondary: #c9785d;
-  --color-accent: #d9a441;
-  --color-background: #f7f4ed;
-  --color-surface: #fffdf8;
-  --color-text: #252525;
-  --color-text-muted: #706d67;
-  --color-border: #ded9cf;
+  /* Brand palette */
+  --color-primary: #1d3d5c; /* navy */
+  --color-primary-dark: #0f1f2e; /* navy dark */
+  --color-secondary: #d4936d; /* terracotta */
+  --color-accent: #d0b088; /* gold */
+  --color-sage: #8b9d83;
+  --color-background: #f5f3ef; /* cream */
+  --color-surface: #ffffff;
+  --color-text: #4a4a4a; /* charcoal */
+
+  /* Supporting tokens */
+  --color-ink: #0f1f2e; /* text on terracotta, gold and sage fills */
+  --color-text-muted: #6a6a6a;
+  --color-secondary-text: #9e5a36; /* terracotta as readable text */
+  --color-sage-text: #5e6f57; /* sage as readable text */
+  --color-border: #e2dfd6;
   --color-success: #3e7c59;
   --color-error: #b94a48;
+
+  /* Free (OFL) fonts, self-hosted: Quicksand is the closest free match to All Round Gothic's geometric round
+     shapes (headings, buttons); Nunito keeps body text readable at small sizes. */
+  --font-sans: 'Nunito Variable', ui-rounded, system-ui, sans-serif;
+  --font-display: 'Quicksand Variable', 'Nunito Variable', ui-rounded, system-ui, sans-serif;
+
+  /* Vercel-style two-layer shadow: a tight edge plus a soft spread. */
+  --shadow-card: 0 1px 2px rgb(15 31 46 / 0.06), 0 8px 24px rgb(15 31 46 / 0.06);
+
+  --animate-rise: rise 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-drift: drift 18s ease-in-out infinite alternate;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes drift {
+    from {
+      transform: translate(0, 0) scale(1);
+    }
+    to {
+      transform: translate(24px, -32px) scale(1.08);
+    }
+  }
 }
 
 @layer base {
   html {
     background-color: var(--color-background);
     color: var(--color-text);
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3 {
+    color: var(--color-primary);
+    font-family: var(--font-display);
+  }
+
+  button {
+    font-family: var(--font-display);
   }
 
   /* Visible focus: 2px primary ring with a surface-colored offset. */
@@ -33,5 +83,16 @@
     box-shadow:
       0 0 0 2px var(--color-surface),
       0 0 0 4px var(--color-primary);
+  }
+
+  /* Motion only via transform/opacity, and none at all for people who ask for less. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }

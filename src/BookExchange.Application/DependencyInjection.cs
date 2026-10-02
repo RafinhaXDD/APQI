@@ -1,4 +1,6 @@
+using BookExchange.Application.Books;
 using BookExchange.Application.Credits;
+using BookExchange.Application.Listings;
 using BookExchange.Application.Users;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +14,8 @@ public static class DependencyInjection
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly, includeInternalTypes: true);
         services.AddScoped<CreditLedger>();
         services.AddScoped<ProfileService>();
+        services.AddScoped<BookService>();
+        services.AddScoped<ListingService>();
         return services;
     }
 }

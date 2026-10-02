@@ -241,3 +241,16 @@ Every phase: Analyze → Plan → Implement → Test → Review → Fix → Veri
 17. **Single replica.** No Redis implies one API instance. *Recommend:* pin Container Apps to min = max = 1 replica in v1 and record the scale-out trigger as an ADR. **✅ Resolved: accepted (2026-10-01).**
 
 Accepted decisions are recorded under "Changes vs SPEC.md" in `CLAUDE.md`.
+
+## 8. Update 2026-10-02: AQPI-v2 merge
+
+The owner's earlier AQPI-v2 brief (token-based exchange through a shared collection, 7 categories, reader
+reviews, landing page, Duda's brand) was merged into this plan. Summary of what changed (details and reasons in
+`CLAUDE.md`, "Decisions from the AQPI-v2 merge"):
+
+- New **Phase 5b — Brand + catalogue**: AQPI brand, landing page, 6 categories + "Bom para começar" tag, starter
+  ficha moved to the first listing with a photo.
+- New **Phase 6b — AQPI collection**: a small local central collection modelled as an operator account; donations
+  accepted by an admin mint +1 ficha; collection books are picked with a normal Credit request and handed over by
+  pickup or hand delivery (no shipping integration).
+- **Phase 10** also covers book reviews (reader reviews with a page per book).

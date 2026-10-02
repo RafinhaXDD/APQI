@@ -4,8 +4,8 @@
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <!-- Test method names use underscores; async tests don't need ConfigureAwait -->
-    <NoWarn>$(NoWarn);CA1707;CA2007</NoWarn>
+    <!-- Test names use underscores (CA1707); async tests need no ConfigureAwait (CA2007); inline test-data arrays are fine (CA1861). -->
+    <NoWarn>$(NoWarn);CA1707;CA2007;CA1861</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Using Include="Xunit" />

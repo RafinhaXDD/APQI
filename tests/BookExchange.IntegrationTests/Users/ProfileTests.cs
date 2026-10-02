@@ -9,7 +9,7 @@ public sealed class ProfileTests(ApiFixture fixture) : IClassFixture<ApiFixture>
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
     [Fact]
-    public async Task New_confirmed_user_has_one_available_credit_and_no_home_area()
+    public async Task New_confirmed_user_has_no_ficha_yet_and_no_home_area()
     {
         using var client = fixture.CreateAuthClient();
         await client.SignUpAndLoginAsync(name: "Dani");
@@ -21,7 +21,8 @@ public sealed class ProfileTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         body.RootElement.GetProperty("displayName").GetString().Should().Be("Dani");
         body.RootElement.GetProperty("preferredLanguage").GetString().Should().Be("pt-BR");
         body.RootElement.GetProperty("homeArea").ValueKind.Should().Be(JsonValueKind.Null);
-        body.RootElement.GetProperty("credits").GetProperty("available").GetInt32().Should().Be(1);
+        // The starter ficha comes with the first listed book with a photo, not with sign-up (Phase 5b).
+        body.RootElement.GetProperty("credits").GetProperty("available").GetInt32().Should().Be(0);
         body.RootElement.GetProperty("credits").GetProperty("held").GetInt32().Should().Be(0);
     }
 
@@ -89,7 +90,7 @@ public sealed class ProfileTests(ApiFixture fixture) : IClassFixture<ApiFixture>
         using var body = await ReadAsync(put);
 
         put.StatusCode.Should().Be(HttpStatusCode.OK);
-        body.RootElement.GetProperty("credits").GetProperty("available").GetInt32().Should().Be(1);
+        body.RootElement.GetProperty("credits").GetProperty("available").GetInt32().Should().Be(0);
     }
 
     [Fact]

@@ -5,7 +5,7 @@
  */
 export const ptBR = {
   'app.name': 'AQPI',
-  'app.tagline': 'Troque livros com quem está perto de você.',
+  'app.tagline': 'Troque. Leia. Repita.',
 
   'nav.home': 'Início',
   'nav.login': 'Entrar',
@@ -80,12 +80,13 @@ export const ptBR = {
   'register.passwordHint': 'Pelo menos {min} caracteres. Uma frase fácil de lembrar funciona bem.',
   'register.checkEmailTitle': 'Confira seu e-mail',
   'register.checkEmailBody':
-    'Enviamos um link de confirmação para {email}. Confirme para entrar e ganhar sua primeira ficha.',
+    'Enviamos um link de confirmação para {email}. Confirme para entrar e anunciar seu primeiro livro.',
 
   'confirm.title': 'Confirmação de e-mail',
   'confirm.working': 'Confirmando seu e-mail…',
   'confirm.success': 'E-mail confirmado!',
-  'confirm.successCredit': 'Você ganhou sua primeira ficha para pedir um livro.',
+  'confirm.successCredit':
+    'Agora anuncie seu primeiro livro com uma foto e ganhe sua primeira ficha para pedir outro.',
   'confirm.goLogin': 'Entrar agora',
   'confirm.resendTitle': 'Peça um novo link',
   'confirm.resendSubmit': 'Enviar novo link',
@@ -107,7 +108,7 @@ export const ptBR = {
   'profile.credits.other': '{count} fichas disponíveis',
   'profile.creditsHeld': 'Reservadas em trocas: {count}',
   'profile.creditsHelp':
-    'Use uma ficha para pedir um livro. Você ganha uma a cada livro que entrega.',
+    'Você ganha sua primeira ficha ao anunciar seu primeiro livro com foto, e mais uma a cada livro que entrega. Use uma ficha para pedir um livro.',
   'profile.detailsTitle': 'Seus dados',
   'profile.homeTitle': 'Sua região',
   'profile.homeBody':
@@ -125,6 +126,162 @@ export const ptBR = {
 
   'notFound.title': 'Página não encontrada',
   'notFound.body': 'O endereço pode estar errado ou a página foi removida.',
+
+  'nav.search': 'Buscar livros',
+  'nav.addBook': 'Anunciar livro',
+  'nav.myListings': 'Meus livros',
+  'home.ctaSearch': 'Buscar livros perto de mim',
+  'home.ctaAddBook': 'Anunciar um livro',
+
+  'errors.forbidden': 'Você não pode alterar este anúncio.',
+  'errors.book.invalid_isbn': 'Este ISBN não é válido. Confira os números.',
+  'errors.book.not_found': 'Não encontramos este livro. Preencha os dados abaixo.',
+  'errors.book.lookup_unavailable': 'A busca automática está fora do ar. Preencha os dados abaixo.',
+  'errors.listing.location_required':
+    'Defina sua região no perfil ou compartilhe sua localização para continuar.',
+  'errors.image.invalid': 'Envie uma foto JPEG, PNG ou WebP.',
+  'errors.image.too_large': 'Cada foto pode ter no máximo 5 MB.',
+
+  'condition.New': 'Novo',
+  'condition.LikeNew': 'Como novo',
+  'condition.Good': 'Bom',
+  'condition.Fair': 'Razoável',
+  'condition.Worn': 'Desgastado',
+
+  'status.Draft': 'Rascunho',
+  'status.Active': 'Disponível',
+  'status.Reserved': 'Reservado',
+  'status.Exchanged': 'Trocado',
+  'status.Archived': 'Arquivado',
+
+  'distance.lessThanOne': 'a menos de 1 km',
+  'distance.km': 'a {km} km',
+
+  'search.title': 'Livros perto de você',
+  'search.query': 'Título ou autor',
+  'search.radius': 'Distância',
+  'search.radiusOption': 'Até {km} km',
+  'search.condition': 'Estado',
+  'search.anyCondition': 'Qualquer estado',
+  'search.sort': 'Ordenar por',
+  'search.sort.Distance': 'Mais perto',
+  'search.sort.Newest': 'Mais recentes',
+  'search.sort.Title': 'Título',
+  'search.useMyLocation': 'Usar minha localização',
+  'search.usingMyLocation': 'Usando sua localização atual',
+  'search.usingHome': 'Perto da sua região: {area}',
+  'search.needLocation':
+    'Para ver livros perto de você, compartilhe sua localização ou entre e defina sua região.',
+  'search.empty': 'Nenhum livro encontrado aqui. Tente aumentar a distância ou mudar a busca.',
+  'search.results.one': '{count} livro encontrado',
+  'search.results.other': '{count} livros encontrados',
+  'search.loadMore': 'Carregar mais',
+  'search.by': 'por {authors}',
+  'search.yours': 'Seu anúncio',
+
+  'listing.owner': 'Anunciado por {name}',
+  'listing.isbn': 'ISBN {isbn}',
+  'listing.published': 'Publicado em {year}',
+  'listing.noPhotos': 'Sem fotos ainda.',
+  'listing.photo': 'Foto {n} de {total}',
+  'listing.request': 'Pedir este livro',
+  'listing.requestSoon': 'Os pedidos de troca chegam na próxima etapa.',
+  'listing.edit': 'Editar anúncio',
+  'listing.archive': 'Arquivar',
+  'listing.archiveConfirm': 'Arquivar este anúncio? Ele deixará de aparecer nas buscas.',
+  'listing.archived': 'Anúncio arquivado.',
+
+  'create.title': 'Anunciar um livro',
+  'create.isbnStep': '1. Encontre o livro',
+  'create.isbnLabel': 'ISBN (código de barras)',
+  'create.isbnHint': 'Os 13 números abaixo do código de barras, geralmente na contracapa.',
+  'create.lookup': 'Buscar',
+  'create.looking': 'Buscando…',
+  'create.scan': 'Escanear código de barras',
+  'create.stopScan': 'Parar câmera',
+  'create.scanHelp': 'Aponte a câmera para o código de barras do livro.',
+  'create.cameraError.denied':
+    'O acesso à câmera foi bloqueado. Permita a câmera para este site (ícone ao lado do endereço) ou digite o ISBN.',
+  'create.cameraError.notFound': 'Nenhuma câmera encontrada neste aparelho. Digite o ISBN.',
+  'create.cameraError.inUse':
+    'A câmera está sendo usada por outro programa (Teams, Zoom…). Feche-o e tente de novo, ou digite o ISBN.',
+  'create.cameraError.insecure': 'A câmera só funciona em https ou em localhost. Digite o ISBN.',
+  'create.cameraError.unknown': 'Não foi possível usar a câmera. Digite o ISBN.',
+  'create.noIsbn': 'O livro não tem ISBN? Preencha à mão',
+  'create.manualTitle': 'Dados do livro',
+  'create.bookTitle': 'Título',
+  'create.authors': 'Autores (separados por vírgula)',
+  'create.changeBook': 'Trocar livro',
+  'create.detailsStep': '2. Categoria, estado e descrição',
+  'create.description': 'Descrição (opcional)',
+  'create.descriptionHint': 'Conte algo útil: marcações, dedicatória, edição.',
+  'create.photosStep': '3. Fotos (opcional, até {max})',
+  'create.addPhotos': 'Adicionar fotos',
+  'create.removePhoto': 'Remover foto',
+  'create.locationNote': 'O livro aparecerá perto de: {area}.',
+  'create.needHome': 'Antes de anunciar, defina sua região no perfil.',
+  'create.goProfile': 'Definir minha região',
+  'create.publish': 'Publicar',
+  'create.publishing': 'Publicando…',
+  'create.uploading': 'Enviando foto {n} de {total}…',
+  'create.photoFailed': 'O anúncio foi publicado, mas uma foto não pôde ser enviada: {reason}',
+
+  'edit.title': 'Editar anúncio',
+  'edit.photos': 'Fotos',
+  'edit.saved': 'Alterações salvas.',
+  'edit.done': 'Ver anúncio',
+
+  'mine.title': 'Meus livros',
+  'mine.empty': 'Você ainda não anunciou nenhum livro.',
+  'mine.photos.one': '{count} foto',
+  'mine.photos.other': '{count} fotos',
+
+  'category.Fiction': 'Ficção',
+  'category.NonFiction': 'Não ficção',
+  'category.PersonalDevelopment': 'Desenvolvimento pessoal',
+  'category.Philosophy': 'Filosofia e reflexão',
+  'category.CareerStrategy': 'Carreira e estratégia',
+  'category.Classics': 'Clássicos da literatura',
+  'category.beginners': 'Bom para começar',
+
+  'search.category': 'Categoria',
+  'search.anyCategory': 'Todas as categorias',
+  'search.beginnersOnly': 'Só livros bons para começar',
+  'create.category': 'Categoria',
+  'create.categoryRequired': 'Escolha uma categoria.',
+  'create.beginners': 'Bom para começar: leitura leve, boa para quem está criando o hábito',
+
+  'landing.eyebrow': 'A Quem Pode Interessar',
+  'landing.title': 'Troque. Leia. Repita.',
+  'landing.lead':
+    'Todo livro parado na estante é uma história esperando alguém. Anuncie os que você já leu, ganhe fichas e escolha o próximo, mesmo que você ainda não seja de ler muito.',
+  'landing.ctaSearch': 'Ver livros perto de mim',
+  'landing.ctaList': 'Anunciar um livro',
+  'landing.howEyebrow': 'Como funciona',
+  'landing.howTitle': 'Um livro sai da sua estante, outro entra',
+  'landing.step1.title': 'Anuncie um livro',
+  'landing.step1.body':
+    'Escaneie o código de barras: título, autor e capa aparecem sozinhos. Leva menos de um minuto.',
+  'landing.step2.title': 'Ganhe uma ficha',
+  'landing.step2.body':
+    'Seu primeiro livro com foto vale uma ficha. Depois, cada livro que você entrega vale mais uma.',
+  'landing.step3.title': 'Escolha outro',
+  'landing.step3.body':
+    'Use a ficha para pedir qualquer livro disponível perto de você, ou proponha uma troca direta.',
+  'landing.step4.title': 'Leia e repita',
+  'landing.step4.body':
+    'Combinem um lugar, entreguem o livro pessoalmente e coloque a história de volta em circulação.',
+  'landing.categoriesEyebrow': 'Acervo',
+  'landing.categoriesTitle': 'Navegue por assunto',
+  'landing.beginnersTitle': 'Não sabe por onde começar?',
+  'landing.beginnersBody':
+    'Separamos livros leves e envolventes para quem quer criar o hábito de ler, sem pressa.',
+  'landing.beginnersCta': 'Ver livros para começar',
+  'landing.manifesto': 'Livro bom é livro que circula.',
+  'landing.manifestoBody':
+    'Deixar um livro parado é guardar uma história só para si. Na AQPI, cada livro lido segue viagem até a próxima pessoa que ele pode interessar.',
+  'landing.closingTitle': 'Pronto para fazer seu primeiro livro circular?',
+  'landing.closingCta': 'Começar agora',
 } as const
 
 export type MessageKey = keyof typeof ptBR

@@ -82,7 +82,7 @@ export function Button({
   const styles = {
     primary:
       'bg-primary text-surface hover:bg-primary-dark rounded-md px-4 py-2 font-semibold disabled:opacity-60',
-    secondary: 'bg-secondary text-text rounded-md px-4 py-2 font-semibold disabled:opacity-60',
+    secondary: 'bg-secondary text-ink rounded-md px-4 py-2 font-semibold disabled:opacity-60',
     link: 'text-primary underline underline-offset-2',
   }
   return <button className={`${styles[variant]} ${className}`} {...props} />
