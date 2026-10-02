@@ -58,7 +58,7 @@ Side effects (same transaction):
 ### Book credits
 - Never an editable balance. Store `CreditEvent { Id, UserId, Type, Amount, ExchangeRequestId?, Description, CreatedAt }` with types `Starter, Held, Released, Spent, Earned, AdminAdjustment`. Balance = sum of events.
 - Available balance can never go negative; enforce in the domain and test concurrent spends.
-- One `Starter` credit per user after email confirmation. Credits are earned only on completed handoffs, never on listing.
+- One `Starter` credit per user, granted when they publish their **first listing with a photo** (changed in Phase 5b; was "after email confirmation"). After that, credits are earned on completed handoffs and on donations accepted into the AQPI collection (Phase 6b), never just for listing.
 
 ### Location and privacy
 - Listings store a PostGIS point plus a city/area label. Search supports radius (km) and sorts by distance.
@@ -67,9 +67,9 @@ Side effects (same transaction):
 ### Wishlists (v1, after core exchange flow)
 - Users add wanted books by ISBN. When a matching Active listing appears within the user's radius, create a notification via the outbox.
 
-### Design fix
-- `Pending` status uses an `accent` **filled badge with `text` color**, never accent-colored text (fails WCAG AA).
-- Text on `secondary` fills (secondary CTAs, `Disputed` badge) uses `text`, not `surface`: surface on secondary is 3.26:1 (fails AA), text on secondary is 4.62:1. Verified by `frontend/src/design/tokens.test.ts`. *(approved 2026-10-02)*
+### Design (AQPI brand, Phase 5b — see frontend/DESIGN.md)
+- Duda's palette replaces the SPEC §11.4 colours. Terracotta, gold and sage are **fills only**; text on them is `ink` (#0F1F2E). As text on cream they fail AA, so readable variants `secondary-text` and `sage-text` exist. Enforced by `frontend/src/design/tokens.test.ts`, which also scans components.
+- Status badges stay filled: Pending/Reserved = `accent` + `ink`, Disputed = `secondary` + `ink`.
 
 ### Decisions from docs/PLAN.md §7 (accepted 2026-10-01)
 1. `Spent` credit events have Amount **0** (they close the hold); Available = Σ Amount; Held is derived from event counts.
@@ -99,7 +99,7 @@ Side effects (same transaction):
 - Frontend linting stays on ESLint (current Vite template ships oxlint).
 
 ### Frontend direction (decided 2026-10-01, after reviewing the earlier AQPI Next.js site)
-- Visual design stays on SPEC §11.4 tokens; the old AQPI site (navy/gold palette, mascot) is loose inspiration only, nothing copied over.
+- Visual design is the **AQPI brand** (decided 2026-10-02, replacing the earlier "keep SPEC colours" choice): palette, logo mark, worm mascot, light cream background, tech-premium motion with transform/opacity only and reduced-motion respected.
 - UI text is bilingual: **pt-BR and English** via an i18n layer from Phase 4 on (library choice justified then, per R-1). Code, API and docs stay in English. Every user-facing string goes through translations, none hard-coded.
 - Default language follows the browser (`navigator.languages`): Portuguese → pt-BR, English → English, anything else → **pt-BR**. The user can switch; the choice is remembered. *(decided 2026-10-02)*
 - User-facing app name is **AQPI** (title, manifest, header, emails). Code and solution names stay `BookExchange`. *(decided 2026-10-02; applied in Phase 4)*
@@ -115,18 +115,36 @@ Side effects (same transaction):
 - Application references EF Core packages and works through `IAppDbContext` (Domain stays BCL-only).
 - Frontend i18n is a small typed dictionary (no library); plural = singular only for exactly 1.
 
+### Decisions from Phase 5 (books + listings)
+- Books are shared records keyed by normalized ISBN-13 (ISBN-10 converted, checksums verified). Lookup: database first, then Open Library (stored on success). Not found (404) or provider down (503) switches the UI to manual entry; listing is never blocked.
+- Listings are published Active immediately (no draft step). Location defaults to the owner's home area. Each listing stores the exact point (owner-only) and a public point shifted 300–700 m at random, fixed per location; renaming the area keeps it, moving re-jitters.
+- Search is public: anonymous callers send `lat`/`lng` (their own position, never stored); signed-in users default to their home area. Radius 0.5–50 km (default 5), page size capped at 50. Full-text is accent-insensitive with prefix matching (`immutable_unaccent` + generated `tsvector`).
+- Editing someone else's Active listing is 403; a non-Active listing you don't own is 404 (R-17). Only Active listings can be edited or get photos.
+- Photos: format by magic bytes (JPEG/PNG/WebP), 5 MB, 8 per listing, 40 MP max; auto-rotated, all metadata stripped, re-encoded as WebP (1280 px display + 320 px thumbnail) under generated keys, served by the API with immutable caching.
+- **SixLabors.ImageSharp pinned to 3.1.x**: same Split License as approved (PLAN Q10), but 4.x adds a build-time license-key check that fails Release builds without a registered key.
+- Docker Compose stores photos in Azurite (pinned 3.37.0, `--skipApiVersionCheck` because the SDK can be ahead of the emulator); tests use local disk plus one Azurite (Testcontainers) class.
+### Decisions from the AQPI-v2 merge (2026-10-02, Phase 5b)
+- AQPI-v2 brief merged into this project without redoing finished work (plan: two kinds of exchange side by side).
+- **AQPI collection ("Acervo AQPI")**: a small, local, low-volume central collection run by the owner, modelled as an operator account that owns listings. Donate → admin receives and accepts in person → donor gets +1 ficha (`DonationAccepted` ledger type) → the book becomes an Acervo listing. Picking from it is a normal Credit request; handover by pickup or hand delivery agreed in chat. No carrier/postage integration (shipping stays out of scope). Peer-to-peer swaps and credit requests stay as built. Drop-off partners (libraries, cafés) may come later as meetup spots.
+- **Categories**: 6 subjects (Fiction, Non-fiction, Personal development, Philosophy & reflection, Career & strategy, Literary classics), chosen by the owner when listing, plus an optional **"Bom para começar"** tag for beginners. Both filterable in search. Target audience includes non-readers.
+- **Starter ficha** moved from email confirmation to the first published listing with ≥ 1 photo (one per account); without some mint, fichas could never enter a peer-to-peer system.
+- **Fonts** (free, OFL, self-hosted): **Quicksand** for headings and buttons (closest free match to All Round Gothic) and **Nunito** for body text. No paid licence needed. English UI calls fichas "tokens".
+- Node/Express and Vercel from the v2 brief are superseded by the built .NET + Azure stack.
+
 ## Phases (replaces SPEC.md §14; details and exit criteria in docs/PLAN.md §5)
 Each backend phase ships its thin frontend slice in the same phase.
 1. Inspect ✅
 2. Plan ✅
 3. Skeleton + infra ✅
-4. Identity + Users (+UI) ✅ (pending approval)
-5. Books + Listings (+UI)
+4. Identity + Users (+UI) ✅
+5. Books + Listings (+UI) ✅
+5b. Brand + catalogue: AQPI brand, landing page, 6 categories + "Bom para começar" tag, starter ficha on first listing with photo ✅
 6. Exchanges + Credits + Handoff (+UI)
+6b. AQPI collection: admin role, "Acervo AQPI" operator account, donations (receive → accept → +1 ficha), pickup/hand delivery for collection requests
 7. Messaging (+UI): journey works end to end in the browser at 375 px
 8. MVP gate: `FullExchangeJourneyTests` (credit + swap), dev seed data. **MVP done.**
 9. Notifications + web push + email fallback
-10. Listing Q&A + Reviews + Reputation
+10. Listing Q&A + Reviews + Reputation, plus **book reviews** (reader reviews with a page per book)
 11. Wishlists
 12. Moderation (incl. meetup spots)
 13. Frontend completion + PWA

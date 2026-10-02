@@ -4,8 +4,11 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router'
 import App from './App.tsx'
 import { AuthProvider } from './features/auth/AuthProvider.tsx'
+import { SearchOriginProvider } from './features/listings/origin.tsx'
 import { I18nProvider } from './i18n/I18nProvider.tsx'
 import { ApiError } from './services/api.ts'
+import '@fontsource-variable/nunito'
+import '@fontsource-variable/quicksand'
 import './index.css'
 
 const queryClient = new QueryClient({
@@ -25,7 +28,9 @@ createRoot(document.getElementById('root')!).render(
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <AuthProvider>
-            <App />
+            <SearchOriginProvider>
+              <App />
+            </SearchOriginProvider>
           </AuthProvider>
         </BrowserRouter>
       </QueryClientProvider>

@@ -1,7 +1,6 @@
 using System.Buffers.Text;
 using System.Text;
 using BookExchange.Application.Auth;
-using BookExchange.Application.Credits;
 using BookExchange.Application.Shared.Outbox;
 using BookExchange.Domain.Credits;
 using BookExchange.Domain.Users;
@@ -40,7 +39,6 @@ public static class AuthResult
 public sealed class AuthService(
     AppDbContext db,
     UserManager<AppUser> users,
-    CreditLedger ledger,
     IOutbox outbox,
     AccessTokenIssuer accessTokens,
     PasswordTimingGuard timingGuard,
@@ -161,7 +159,10 @@ public sealed class AuthService(
         }
     }
 
-    /// <summary>Confirms the email and grants the starter credit in the same transaction.</summary>
+    /// <summary>
+    /// Confirms the email. No ficha here any more (CLAUDE.md, Phase 5b): the starter ficha comes with the
+    /// first published book that has a photo.
+    /// </summary>
     public async Task<AuthResult<bool>> ConfirmEmailAsync(ConfirmEmailRequest request, CancellationToken cancellationToken)
     {
         var user = await users.FindByIdAsync(request.UserId.ToString());
@@ -171,17 +172,8 @@ public sealed class AuthService(
             return AuthResult.Fail<bool>(AuthFailure.InvalidLink);
         }
 
-        await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
         var confirmed = await users.ConfirmEmailAsync(user, token);
-        if (!confirmed.Succeeded)
-        {
-            return AuthResult.Fail<bool>(AuthFailure.InvalidLink);
-        }
-
-        await ledger.GrantStarterAsync(user.Id, cancellationToken);
-        await db.SaveChangesAsync(cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
-        return AuthResult.Ok<bool>(true);
+        return confirmed.Succeeded ? AuthResult.Ok<bool>(true) : AuthResult.Fail<bool>(AuthFailure.InvalidLink);
     }
 
     /// <summary>Queues a new confirmation email for unconfirmed accounts; silent otherwise (R-19).</summary>

@@ -1,11 +1,15 @@
 using BookExchange.Application.Abstractions;
 using BookExchange.Application.Auth;
 using BookExchange.Application.Shared.Outbox;
+using BookExchange.Application.Listings;
+using BookExchange.Infrastructure.Books;
 using BookExchange.Infrastructure.Email;
 using BookExchange.Infrastructure.Health;
 using BookExchange.Infrastructure.Identity;
+using BookExchange.Infrastructure.Listings;
 using BookExchange.Infrastructure.Outbox;
 using BookExchange.Infrastructure.Persistence;
+using BookExchange.Infrastructure.Storage;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +38,7 @@ public static class DependencyInjection
         AddOutbox(services, configuration);
         AddIdentity(services, configuration);
         AddEmail(services, configuration);
+        AddCatalog(services, configuration);
 
         services.AddHealthChecks()
             .AddCheck<DatabaseHealthCheck>("database", tags: [ReadyHealthTag]);
@@ -92,6 +97,39 @@ public static class DependencyInjection
         services.AddSingleton<PasswordTimingGuard>();
         services.AddSingleton<AccessTokenIssuer>();
         services.AddScoped<AuthService>();
+    }
+
+    private static void AddCatalog(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddScoped<IListingQueries, ListingQueries>();
+        services.AddSingleton<IImageProcessor, ImageSharpImageProcessor>();
+
+        var storage = configuration.GetSection(StorageOptions.SectionName);
+        services.AddOptions<StorageOptions>().Bind(storage)
+            .Validate(o => o.Provider is "LocalDisk" || (o.Provider is "Blob" && !string.IsNullOrWhiteSpace(o.BlobConnectionString)),
+                "Storage:Provider must be LocalDisk, or Blob with Storage:BlobConnectionString.")
+            .ValidateOnStart();
+        if (storage.GetValue<string>(nameof(StorageOptions.Provider)) == "Blob")
+        {
+            services.AddSingleton<IFileStorage, BlobFileStorage>();
+        }
+        else
+        {
+            services.AddSingleton<IFileStorage, LocalDiskFileStorage>();
+        }
+
+        // Open Library asks clients to identify themselves; resilience adds timeouts, retries and a breaker.
+        services.AddHttpClient<IBookMetadataProvider, OpenLibraryMetadataProvider>(client =>
+            {
+                client.BaseAddress = new Uri(configuration["OpenLibrary:BaseUrl"] ?? "https://openlibrary.org/");
+                client.DefaultRequestHeaders.UserAgent.ParseAdd("AQPI/1.0 (+https://github.com/RafinhaXDD/APQI)");
+            })
+            .AddStandardResilienceHandler(options =>
+            {
+                options.AttemptTimeout.Timeout = TimeSpan.FromSeconds(4);
+                options.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(10);
+                options.Retry.MaxRetryAttempts = 1;
+            });
     }
 
     private static void AddEmail(IServiceCollection services, IConfiguration configuration)

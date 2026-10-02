@@ -11,7 +11,7 @@ public sealed class EmailConfirmationTests(ApiFixture fixture) : IClassFixture<A
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
     [Fact]
-    public async Task Confirming_grants_exactly_one_starter_credit_and_the_balance_equals_the_event_sum()
+    public async Task Confirming_grants_no_ficha_and_reusing_the_link_is_harmless()
     {
         using var client = fixture.CreateAuthClient();
         var email = AuthClient.NewEmail();
@@ -23,11 +23,11 @@ public sealed class EmailConfirmationTests(ApiFixture fixture) : IClassFixture<A
 
         first.StatusCode.Should().Be(HttpStatusCode.NoContent);
         again.StatusCode.Should().BeOneOf(HttpStatusCode.NoContent, HttpStatusCode.BadRequest);
-        await AssertSingleStarterAsync(userId);
+        await AssertNoFichaAsync(userId);
     }
 
     [Fact]
-    public async Task Concurrent_confirmations_still_grant_a_single_starter_credit()
+    public async Task Concurrent_confirmations_never_create_a_ficha()
     {
         using var client = fixture.CreateAuthClient();
         var email = AuthClient.NewEmail();
@@ -40,7 +40,7 @@ public sealed class EmailConfirmationTests(ApiFixture fixture) : IClassFixture<A
 
         responses.Should().Contain(r => r.StatusCode == HttpStatusCode.NoContent);
         responses.Should().OnlyContain(r => r.StatusCode == HttpStatusCode.NoContent || r.StatusCode == HttpStatusCode.BadRequest);
-        await AssertSingleStarterAsync(userId);
+        await AssertNoFichaAsync(userId);
     }
 
     [Fact]
@@ -80,15 +80,16 @@ public sealed class EmailConfirmationTests(ApiFixture fixture) : IClassFixture<A
         fixture.Factory.Emails.To(portuguese).Single().Subject.Should().Be("Confirme seu e-mail na AQPI");
     }
 
-    private async Task AssertSingleStarterAsync(Guid userId)
+    private async Task AssertNoFichaAsync(Guid userId)
     {
         var (starters, sum, account) = await fixture.WithDbAsync(async db => (
             await db.CreditEvents.CountAsync(e => e.UserId == userId && e.Type == CreditEventType.Starter, Ct),
             await db.CreditEvents.Where(e => e.UserId == userId).SumAsync(e => e.Amount, Ct),
             await db.CreditAccounts.AsNoTracking().SingleAsync(a => a.UserId == userId, Ct)));
 
-        starters.Should().Be(1);
-        account.Available.Should().Be(sum).And.Be(1);
+        // Phase 5b: the starter ficha comes with the first listed book with a photo (see StarterFichaTests).
+        starters.Should().Be(0);
+        account.Available.Should().Be(sum).And.Be(0);
         account.Held.Should().Be(0);
     }
 }

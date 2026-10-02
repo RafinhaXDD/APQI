@@ -66,7 +66,7 @@ describe('translations', () => {
   it('picks the plural form per language', () => {
     expect(translatePlural('pt-BR', 'profile.credits', 1)).toBe('1 ficha disponível')
     expect(translatePlural('pt-BR', 'profile.credits', 0)).toBe('0 fichas disponíveis')
-    expect(translatePlural('en', 'profile.credits', 1)).toBe('1 credit available')
-    expect(translatePlural('en', 'profile.credits', 3)).toBe('3 credits available')
+    expect(translatePlural('en', 'profile.credits', 1)).toBe('1 token available')
+    expect(translatePlural('en', 'profile.credits', 3)).toBe('3 tokens available')
   })
 })

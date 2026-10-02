@@ -1,6 +1,8 @@
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 using BookExchange.Api.Auth;
 using BookExchange.Api.Infrastructure;
+using BookExchange.Api.Listings;
 using BookExchange.Api.Users;
 using BookExchange.Application;
 using BookExchange.Infrastructure;
@@ -21,6 +23,7 @@ builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = 
     context.ProblemDetails.Extensions.TryAdd(Problems.CodeKey, Problems.DefaultCode(context.ProblemDetails.Status));
 });
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddOpenApi();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -92,5 +95,6 @@ app.MapHealthChecks("/health", new HealthCheckOptions
 
 app.MapAuthEndpoints();
 app.MapUserEndpoints();
+app.MapCatalogEndpoints();
 
 await app.RunAsync();

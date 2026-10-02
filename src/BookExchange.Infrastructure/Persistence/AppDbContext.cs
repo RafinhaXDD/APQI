@@ -1,5 +1,7 @@
 using BookExchange.Application.Abstractions;
+using BookExchange.Domain.Books;
 using BookExchange.Domain.Credits;
+using BookExchange.Domain.Listings;
 using BookExchange.Domain.Users;
 using BookExchange.Infrastructure.Identity;
 using BookExchange.Infrastructure.Outbox;
@@ -18,6 +20,10 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
 
     public DbSet<CreditAccount> CreditAccounts => Set<CreditAccount>();
 
+    public DbSet<Book> Books => Set<Book>();
+
+    public DbSet<Listing> Listings => Set<Listing>();
+
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
@@ -26,6 +32,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     {
         base.OnModelCreating(builder);
         builder.HasPostgresExtension("postgis");
+        builder.HasPostgresExtension("unaccent");
         builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 }

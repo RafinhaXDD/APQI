@@ -1,4 +1,6 @@
+using BookExchange.Domain.Books;
 using BookExchange.Domain.Credits;
+using BookExchange.Domain.Listings;
 using BookExchange.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -13,6 +15,10 @@ public interface IAppDbContext
     DbSet<CreditEvent> CreditEvents { get; }
 
     DbSet<CreditAccount> CreditAccounts { get; }
+
+    DbSet<Book> Books { get; }
+
+    DbSet<Listing> Listings { get; }
 
     DatabaseFacade Database { get; }
 

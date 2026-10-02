@@ -108,14 +108,16 @@ export async function startSession(path: string, body: unknown, signal?: AbortSi
 
 async function send(path: string, { method = 'GET', body, signal }: RequestOptions) {
   const headers: Record<string, string> = { Accept: 'application/json' }
-  if (body !== undefined) headers['Content-Type'] = 'application/json'
+  // FormData (photo uploads) sets its own multipart Content-Type with the boundary.
+  const isForm = body instanceof FormData
+  if (body !== undefined && !isForm) headers['Content-Type'] = 'application/json'
   if (accessToken) headers.Authorization = `Bearer ${accessToken}`
 
   try {
     return await fetch(path, {
       method,
       headers,
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body: body === undefined ? undefined : isForm ? body : JSON.stringify(body),
       signal,
       credentials: 'same-origin',
     })

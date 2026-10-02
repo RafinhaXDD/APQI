@@ -1,4 +1,5 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router'
+import { AqpiLogo } from './AqpiLogo'
 import { useAuth } from '../features/auth/context'
 import { useI18n } from '../i18n/context'
 import { isLanguage, languages } from '../i18n/i18n'
@@ -14,16 +15,25 @@ export function Layout() {
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="bg-primary-dark text-surface">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3">
           <Link to="/" className="text-lg font-semibold">
-            {t('app.name')}
+            <AqpiLogo />
           </Link>
           <nav
             aria-label={t('nav.main')}
-            className="flex flex-1 flex-wrap items-center gap-2 text-sm"
+            className="order-last -mx-2 flex w-full items-center gap-1 overflow-x-auto text-sm whitespace-nowrap sm:order-none sm:mx-0 sm:w-auto sm:flex-1"
           >
+            <NavLink to="/search" className={navLink}>
+              {t('nav.search')}
+            </NavLink>
             {status === 'authenticated' ? (
               <>
+                <NavLink to="/listings/new" className={navLink}>
+                  {t('nav.addBook')}
+                </NavLink>
+                <NavLink to="/listings/mine" className={navLink}>
+                  {t('nav.myListings')}
+                </NavLink>
                 <NavLink to="/profile" className={navLink}>
                   {t('nav.profile')}
                 </NavLink>

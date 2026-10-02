@@ -127,6 +127,20 @@ describe('apiRequest (R-25)', () => {
     })
   })
 
+  it('sends FormData as multipart without forcing a JSON content type', async () => {
+    setAccessToken('token-1')
+    const mock = mockFetch({ 'POST /api/listings/l1/images': json(201, { id: 'i1' }) })
+    const form = new FormData()
+    form.append('file', new Blob(['x']), 'photo.jpg')
+
+    await apiRequest('/api/listings/l1/images', { method: 'POST', body: form })
+
+    const init = mock.mock.calls[0][1]!
+    expect(init.body).toBe(form)
+    expect((init.headers as Record<string, string>)['Content-Type']).toBeUndefined()
+    expect(authHeader(mock, 0)).toBe('Bearer token-1')
+  })
+
   it('returns undefined for 204 and 202 responses', async () => {
     mockFetch({
       'POST /api/auth/logout': () => new Response(null, { status: 204 }),

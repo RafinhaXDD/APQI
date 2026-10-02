@@ -12,7 +12,7 @@ public class ApiFixture(PostgisContainer postgis) : IAsyncLifetime
 
     public string ConnectionString { get; private set; } = null!;
 
-    public async ValueTask InitializeAsync()
+    public virtual async ValueTask InitializeAsync()
     {
         ConnectionString = await postgis.CreateDatabaseAsync();
         Factory = new ApiFactory(ConnectionString, ConfigureServices, Settings);
@@ -21,7 +21,7 @@ public class ApiFixture(PostgisContainer postgis) : IAsyncLifetime
         await scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.MigrateAsync();
     }
 
-    public async ValueTask DisposeAsync()
+    public virtual async ValueTask DisposeAsync()
     {
         await Factory.DisposeAsync();
         GC.SuppressFinalize(this);
