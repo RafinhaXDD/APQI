@@ -1,3 +1,4 @@
+using BookExchange.Application.Shared;
 using BookExchange.Domain.Shared;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,7 @@ internal sealed partial class GlobalExceptionHandler(
                 Status = StatusCodes.Status409Conflict,
                 Title = "The request conflicts with the current state.",
                 Detail = domain.Message,
+                Extensions = { [Problems.CodeKey] = ErrorCodes.Conflict },
             },
             DbUpdateConcurrencyException => new ProblemDetails
             {

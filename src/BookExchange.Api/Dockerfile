@@ -16,6 +16,8 @@ RUN dotnet publish src/BookExchange.Api/BookExchange.Api.csproj -c Release -o /a
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 COPY --from=build /app .
+# Data Protection keys (email/reset tokens) live here; compose mounts a volume so they survive restarts.
+RUN mkdir /keys && chown $APP_UID /keys
 ENV ASPNETCORE_HTTP_PORTS=8080
 EXPOSE 8080
 # Non-root user built into the official .NET images.

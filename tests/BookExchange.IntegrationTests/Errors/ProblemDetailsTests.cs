@@ -13,17 +13,31 @@ namespace BookExchange.IntegrationTests.Errors;
 public sealed class ProblemDetailsTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 {
     [Fact]
-    public async Task Unknown_route_returns_404_problem_details()
+    public async Task Unknown_route_returns_404_problem_details_to_a_signed_in_user()
     {
-        using var client = fixture.Factory.CreateClient();
+        using var client = fixture.CreateAuthClient();
+        await client.SignUpAndLoginAsync();
 
-        using var response = await client.GetAsync(new Uri("/api/does-not-exist", UriKind.Relative), TestContext.Current.CancellationToken);
+        using var response = await client.GetAsync("/api/does-not-exist");
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         response.Content.Headers.ContentType!.MediaType.Should().Be("application/problem+json");
         using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
         body.RootElement.GetProperty("status").GetInt32().Should().Be(404);
+        body.RootElement.GetProperty("code").GetString().Should().Be("not_found");
         body.RootElement.TryGetProperty("traceId", out _).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Unknown_route_returns_401_problem_details_to_anonymous_callers()
+    {
+        // Secure-by-default fallback policy also covers unmatched routes: anonymous callers can't map the API.
+        using var client = fixture.Factory.CreateClient();
+
+        using var response = await client.GetAsync(new Uri("/api/does-not-exist", UriKind.Relative), TestContext.Current.CancellationToken);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        response.Content.Headers.ContentType!.MediaType.Should().Be("application/problem+json");
     }
 
     [Fact]

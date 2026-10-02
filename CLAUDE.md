@@ -102,15 +102,25 @@ Side effects (same transaction):
 - Visual design stays on SPEC §11.4 tokens; the old AQPI site (navy/gold palette, mascot) is loose inspiration only, nothing copied over.
 - UI text is bilingual: **pt-BR and English** via an i18n layer from Phase 4 on (library choice justified then, per R-1). Code, API and docs stay in English. Every user-facing string goes through translations, none hard-coded.
 - Default language follows the browser (`navigator.languages`): Portuguese → pt-BR, English → English, anything else → **pt-BR**. The user can switch; the choice is remembered. *(decided 2026-10-02)*
-- User-facing app name is **AQPI** (title, manifest, header, emails). Code and solution names stay `BookExchange`. *(decided 2026-10-02; the shell still says "Book Exchange" until its strings move into translations in Phase 4)*
+- User-facing app name is **AQPI** (title, manifest, header, emails). Code and solution names stay `BookExchange`. *(decided 2026-10-02; applied in Phase 4)*
 - No dark mode in v1 (as SPEC).
+
+### Decisions from Phase 4 (identity)
+- Login requires a confirmed email. Wrong password, unknown email and locked account all return the same 401 (`auth.invalid_credentials`); only the right password on an unconfirmed account gets 403 (`auth.email_not_confirmed`). Dummy password hashing keeps timings equal.
+- Passwords: 10–128 characters, no composition rules (Identity options mirror the validator exactly). Lockout after 5 failures for 15 minutes.
+- Access token: JWT, 15 min, in memory. Refresh token: 14 days, SHA-256 hashed, cookie `aqpi_refresh` (`HttpOnly; Secure; SameSite=Strict; Path=/api/auth`). Change password keeps the current session and revokes the others; reset password revokes all.
+- Auth emails go through the outbox with only the user id; the one-time token is generated at send time (never stored). Registering an existing email sends an "account exists" email instead (identical 202).
+- Every endpoint requires login unless marked anonymous (fallback policy); unknown routes answer 401 to anonymous callers. ProblemDetails carry a stable `code` the frontend translates.
+- Rate limits per client IP: one shared budget for login/register/password/confirmation endpoints (20/min), a separate one for refresh (60/min). Needs forwarded headers behind Azure (Phase 15).
+- Application references EF Core packages and works through `IAppDbContext` (Domain stays BCL-only).
+- Frontend i18n is a small typed dictionary (no library); plural = singular only for exactly 1.
 
 ## Phases (replaces SPEC.md §14; details and exit criteria in docs/PLAN.md §5)
 Each backend phase ships its thin frontend slice in the same phase.
 1. Inspect ✅
 2. Plan ✅
 3. Skeleton + infra ✅
-4. Identity + Users (+UI)
+4. Identity + Users (+UI) ✅ (pending approval)
 5. Books + Listings (+UI)
 6. Exchanges + Credits + Handoff (+UI)
 7. Messaging (+UI): journey works end to end in the browser at 375 px
