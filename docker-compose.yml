@@ -41,11 +41,21 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__Database: "Host=db;Port=5432;Database=${POSTGRES_DB:-bookexchange};Username=${POSTGRES_USER:-bookexchange};Password=${POSTGRES_PASSWORD:-bookexchange_dev}"
+      # Dev-only key; the API refuses any "dev-only" key outside Development.
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:-dev-only-signing-key-not-a-secret-0123456789}
+      Email__AppBaseUrl: http://localhost:${FRONTEND_PORT:-5173}
+      Email__Smtp__Host: mailpit
+      Email__Smtp__Port: "1025"
+      DataProtection__KeysPath: /keys
+    volumes:
+      - api-keys:/keys
     ports:
       - "${API_PORT:-5080}:8080"
     depends_on:
       db:
         condition: service_healthy
+      mailpit:
+        condition: service_started
 
   frontend:
     build:
@@ -61,3 +71,4 @@ services:
 volumes:
   db-data:
   azurite-data:
+  api-keys:
