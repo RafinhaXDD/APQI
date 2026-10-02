@@ -69,7 +69,7 @@ Side effects (same transaction):
 
 ### Design fix
 - `Pending` status uses an `accent` **filled badge with `text` color**, never accent-colored text (fails WCAG AA).
-- Text on `secondary` fills (secondary CTAs, `Disputed` badge) uses `text`, not `surface`: surface on secondary is 3.26:1 (fails AA), text on secondary is 4.62:1. Verified by `frontend/src/design/tokens.test.ts`. *(Phase 3, pending approval)*
+- Text on `secondary` fills (secondary CTAs, `Disputed` badge) uses `text`, not `surface`: surface on secondary is 3.26:1 (fails AA), text on secondary is 4.62:1. Verified by `frontend/src/design/tokens.test.ts`. *(approved 2026-10-02)*
 
 ### Decisions from docs/PLAN.md §7 (accepted 2026-10-01)
 1. `Spent` credit events have Amount **0** (they close the hold); Available = Σ Amount; Held is derived from event counts.
@@ -101,13 +101,15 @@ Side effects (same transaction):
 ### Frontend direction (decided 2026-10-01, after reviewing the earlier AQPI Next.js site)
 - Visual design stays on SPEC §11.4 tokens; the old AQPI site (navy/gold palette, mascot) is loose inspiration only, nothing copied over.
 - UI text is bilingual: **pt-BR and English** via an i18n layer from Phase 4 on (library choice justified then, per R-1). Code, API and docs stay in English. Every user-facing string goes through translations, none hard-coded.
+- Default language follows the browser (`navigator.languages`): Portuguese → pt-BR, English → English, anything else → **pt-BR**. The user can switch; the choice is remembered. *(decided 2026-10-02)*
+- User-facing app name is **AQPI** (title, manifest, header, emails). Code and solution names stay `BookExchange`. *(decided 2026-10-02; the shell still says "Book Exchange" until its strings move into translations in Phase 4)*
 - No dark mode in v1 (as SPEC).
 
 ## Phases (replaces SPEC.md §14; details and exit criteria in docs/PLAN.md §5)
 Each backend phase ships its thin frontend slice in the same phase.
 1. Inspect ✅
 2. Plan ✅
-3. Skeleton + infra ✅ (pending approval)
+3. Skeleton + infra ✅
 4. Identity + Users (+UI)
 5. Books + Listings (+UI)
 6. Exchanges + Credits + Handoff (+UI)
