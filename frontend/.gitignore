@@ -1,0 +1,3 @@
+# Root .gitignore covers node_modules, dist, .env, editors. Frontend-only extras:
+dev-dist/
+coverage/

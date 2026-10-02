@@ -1,0 +1,37 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens (SPEC §11.4) — the single source of truth for colors.
+ * The default Tailwind palette is removed so components can only use these tokens.
+ * Contrast pairs are verified by src/design/tokens.test.ts.
+ */
+@theme {
+  --color-*: initial;
+
+  --color-primary: #2f5d50;
+  --color-primary-dark: #1f4037;
+  --color-secondary: #c9785d;
+  --color-accent: #d9a441;
+  --color-background: #f7f4ed;
+  --color-surface: #fffdf8;
+  --color-text: #252525;
+  --color-text-muted: #706d67;
+  --color-border: #ded9cf;
+  --color-success: #3e7c59;
+  --color-error: #b94a48;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-background);
+    color: var(--color-text);
+  }
+
+  /* Visible focus: 2px primary ring with a surface-colored offset. */
+  :focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--color-surface),
+      0 0 0 4px var(--color-primary);
+  }
+}

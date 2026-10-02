@@ -1,0 +1,63 @@
+# Local development stack: `docker compose up`
+# Every value has a dev-only default; override in a local .env file (see .env.example).
+name: bookexchange
+
+services:
+  db:
+    # Keep in sync with tests/BookExchange.IntegrationTests/Infrastructure/PostgisContainer.cs
+    image: postgis/postgis:17-3.5
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-bookexchange}
+      POSTGRES_USER: ${POSTGRES_USER:-bookexchange}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bookexchange_dev}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    command: azurite-blob --blobHost 0.0.0.0 --location /data
+    ports:
+      - "${AZURITE_BLOB_PORT:-10000}:10000"
+    volumes:
+      - azurite-data:/data
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "${MAILPIT_UI_PORT:-8025}:8025"
+      - "${MAILPIT_SMTP_PORT:-1025}:1025"
+
+  api:
+    build:
+      context: .
+      dockerfile: src/BookExchange.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Database: "Host=db;Port=5432;Database=${POSTGRES_DB:-bookexchange};Username=${POSTGRES_USER:-bookexchange};Password=${POSTGRES_PASSWORD:-bookexchange_dev}"
+    ports:
+      - "${API_PORT:-5080}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    environment:
+      API_PROXY_TARGET: http://api:8080
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    depends_on:
+      - api
+
+volumes:
+  db-data:
+  azurite-data:

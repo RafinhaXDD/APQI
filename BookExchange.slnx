@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/BookExchange.Api/BookExchange.Api.csproj" />
+    <Project Path="src/BookExchange.Application/BookExchange.Application.csproj" />
+    <Project Path="src/BookExchange.Domain/BookExchange.Domain.csproj" />
+    <Project Path="src/BookExchange.Infrastructure/BookExchange.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/BookExchange.IntegrationTests/BookExchange.IntegrationTests.csproj" />
+    <Project Path="tests/BookExchange.UnitTests/BookExchange.UnitTests.csproj" />
+  </Folder>
+</Solution>
